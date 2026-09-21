@@ -1,5 +1,5 @@
-const CACHE_NAME = 'alphamarr-v2';
-const URLS_TO_CACHE = ['./', './index.html'];
+const CACHE_NAME = 'alphamarr-v3';
+const URLS_TO_CACHE = ['./', './index.html', './manifest.json', './favicon.png', './icon-192.png', './icon-512.png', './apple-touch-icon-180.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
