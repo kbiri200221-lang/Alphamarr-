@@ -845,7 +845,7 @@ function impBonCarb(){
 function impAv(av){
   var ref=av.bonNum||nextBon();
   var html='<!DOCTYPE html><html><head><meta charset="UTF-8"/><style>'+cssPDF()+'</style></head><body>'+entPDF('BON AVANCE','#f59e0b',av.date,av.pirNom,ref);
-  html+='<div class="sec"><div class="st" style="color:#b45309;border-color:#fef3c7">Informations</div><table><tr><td>Pirogue</td><td>'+av.pirNom+'</td></tr><tr><td>Beneficiaire</td><td>'+av.nom+'</td></tr><tr><td>Date</td><td>'+new Date(av.date+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})+'</td></tr>'+(av.motif?'<tr><td>Motif</td><td>'+av.motif+'</td></tr>':'')+'</table></div>';
+  html+='<div class="sec"><div class="st" style="color:#b45309;border-color:#fef3c7">Informations</div><table><tr><td>Pirogue</td><td>'+av.pirNom+'</td></tr><tr><td>Beneficiaire</td><td>'+av.nom+'</td></tr><tr><td>Date</td><td>'+new Date(av.date+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})+'</td></tr>'+'<tr><td>Motif</td><td>'+(av.motif||av.nom||'-')+'</td></tr>'+'</table></div>';
   html+='<div class="grand" style="background:#fffbeb;border:2px solid #f59e0b"><div style="font-size:11px;font-weight:700;color:#b45309;text-transform:uppercase">Montant avance</div><div style="font-size:28px;font-weight:900;color:#d97706">'+fmt(av.montant)+' MRO</div></div>';
   html+=sigPDF(av.nom)+footPDF()+'<scr'+'ipt>window.onload=function(){window.print();}<'+'/scr'+'ipt></body></html>';
   ouvrirPDF(html);
