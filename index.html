@@ -440,6 +440,7 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
     <div class="bloc">
       <div class="bt">💰 Avances à couper</div>
       <div id="rrappels"></div>
+      <div id="rcoupures"></div>
       <label>Nom du pêcheur</label><input class="inp" type="text" id="ravnom" placeholder="Ex: Mohamed"/>
       <label>Montant (MRO)</label><input class="inp" type="number" id="ravmont" placeholder="0"/>
       <button class="btn bor" style="margin-top:8px;padding:11px" onclick="repAjouterAvance()">💰 Ajouter une avance</button>
@@ -1691,13 +1692,28 @@ function repOnDate(){
   repCur={charges:s?s.charges.slice():[]};
   gel('rnpec').value=s?s.npec:''; gel('rnmach').value=s?s.nmach:'';
   ['rfcarb','rfnour','rftrans','rfgend','rfgc','rfautres'].forEach(function(id){gel(id).value=(s&&s.frais[id])||'';});
-  repRenderCharges(); repRenderAv(); repCalc();
+  repRenderCharges(); repRenderAv(); repRenderCoupures(d); repCalc();
 }
 function repEnregistrer(){
   var d=gel('rdate').value||repToday(); var r=repLire();
+  // Si la journee existe deja, on annule d'abord ses coupures pour ne pas les compter deux fois
+  var ancien=repDays[d];
+  if(ancien&&ancien.coupures){ancien.coupures.forEach(function(c){var a=repAv.find(function(x){return x.id===c.id;});if(a)a.restant+=c.montant;});}
+  // Coupure automatique : chaque avance ouverte est prelevee sur la part du pecheur, au maximum une part
+  var coupures=[];
+  repAv.forEach(function(a){
+    if(a.restant>0 && r.part>0){var c=repCouper(a,r.part); if(c>0) coupures.push({id:a.id,nom:a.nom,montant:c});}
+  });
   var frais={}; ['rfcarb','rfnour','rftrans','rfgend','rfgc','rfautres'].forEach(function(id){frais[id]=gN(id);});
-  repDays[d]={charges:repCur.charges,npec:r.pec,nmach:r.mach,frais:frais,resume:r};
-  sRep(); toast('✅ Journée '+d+' enregistrée');
+  repDays[d]={charges:repCur.charges,npec:r.pec,nmach:r.mach,frais:frais,resume:r,coupures:coupures};
+  sRep(); sRepAv(); repRenderAv(); repRenderCoupures(d);
+  toast('✅ Journée '+d+' enregistrée'+(coupures.length?' · '+coupures.length+' avance(s) coupée(s)':''));
+}
+// Affiche les coupures de la journee (visible dans l'app seulement, jamais dans le PDF)
+function repRenderCoupures(d){
+  var el=gel('rcoupures'); var j=repDays[d];
+  el.innerHTML=(j&&j.coupures&&j.coupures.length)?j.coupures.map(function(c){
+    return '<div class="rl ro"><span>Coupé : '+c.nom+'</span><span>- '+fmt(c.montant)+' MRO</span></div>';}).join(''):'';
 }
 function repAjouterAvance(){
   var n=gel('ravnom').value.trim(), m=parseFloat(gel('ravmont').value)||0;
@@ -1714,11 +1730,9 @@ function repRenderAv(){
   }).join(''):'<div class="empty">Aucune avance à couper.</div>';
 }
 // Coupure : au maximum la part du pecheur ; le reste est reporte a la peche suivante
-function repCouper(nom,part){
-  var a=repAv.find(function(x){return x.nom===nom&&x.restant>0;});
-  if(!a) return 0;
+function repCouper(a,part){
   var c=Math.min(a.restant,Math.max(0,part));
-  a.restant-=c; sRepAv(); return c;
+  a.restant-=c; return c;
 }
 // PDF : sans commission, sans division interne, sans avances
 function repPdf(){
