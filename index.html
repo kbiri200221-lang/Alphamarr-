@@ -382,6 +382,70 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
   </div>
 </div>
 
+  <!-- PAGE REPARTITION -->
+  <div class="pg" id="pg-repartition">
+    <div class="bloc">
+      <div class="bt">🧾 Répartition du jour</div>
+      <div class="r2">
+        <div><label>Date</label><input type="date" class="inp" id="rdate" onchange="repOnDate()" style="color-scheme:dark"/></div>
+        <div><label>Pêcheurs du jour</label><input class="inp" type="number" id="rnpec" min="0" placeholder="0" oninput="repCalc()"/></div>
+      </div>
+      <div class="r2" style="margin-top:8px">
+        <div><label>Machines du jour</label><input class="inp" type="number" id="rnmach" min="0" placeholder="0" oninput="repCalc()"/></div>
+        <div><label>Pirogues</label><input class="inp" type="text" value="2 (fixe)" disabled/></div>
+      </div>
+    </div>
+    <div class="bloc">
+      <div class="bt">🐟 Chargement</div>
+      <label>Type</label>
+      <select class="sel" id="rtype" onchange="repCalc()"><option value="moka">Moka (prix par défaut 70 000 MRO/t)</option><option value="marche">Poisson marché (commission 20 %)</option></select>
+      <div class="r2" style="margin-top:8px">
+        <div><label>N° de bon</label><input class="inp" type="text" id="rbon" placeholder="Ex: BON-0001"/></div>
+        <div><label>N° voiture</label><input class="inp" type="text" id="rplate" placeholder="Ex: 1MAU001"/></div>
+      </div>
+      <div class="r2" style="margin-top:8px">
+        <div><label>Tonnes</label><input class="inp" type="number" id="rtonnes" step="0.1" placeholder="0" oninput="repCalc()"/></div>
+        <div><label>Prix/tonne (MRO)</label><input class="inp" type="number" id="rprix" placeholder="70000" oninput="repCalc()"/></div>
+      </div>
+      <button class="btn bbl" style="margin-top:8px;padding:11px" onclick="repAjouterCharge()">➕ Ajouter ce chargement</button>
+      <div id="rcharges" style="margin-top:8px"></div>
+    </div>
+    <div class="bloc">
+      <div class="bt">⛽ Frais du jour (MRO)</div>
+      <div class="r2">
+        <div><label>Carburant</label><input class="inp" type="number" id="rfcarb" placeholder="0" oninput="repCalc()"/></div>
+        <div><label>Nourriture</label><input class="inp" type="number" id="rfnour" placeholder="0" oninput="repCalc()"/></div>
+      </div>
+      <div class="r2" style="margin-top:8px">
+        <div><label>Transport</label><input class="inp" type="number" id="rftrans" placeholder="0" oninput="repCalc()"/></div>
+        <div><label>Gendarmerie</label><input class="inp" type="number" id="rfgend" placeholder="0" oninput="repCalc()"/></div>
+      </div>
+      <div class="r2" style="margin-top:8px">
+        <div><label>Garde-côte</label><input class="inp" type="number" id="rfgc" placeholder="0" oninput="repCalc()"/></div>
+        <div><label>Autres</label><input class="inp" type="number" id="rfautres" placeholder="0" oninput="repCalc()"/></div>
+      </div>
+    </div>
+    <div class="bloc">
+      <div class="bt">📊 Calcul</div>
+      <div class="rl bl"><span>Recette brute</span><span id="rrec">0 MRO</span></div>
+      <div class="rl ro"><span>Commission marché (20 %)</span><span id="rcomm">0 MRO</span></div>
+      <div class="rl ro"><span>Total frais</span><span id="rfr">0 MRO</span></div>
+      <div class="rl bl"><span>Reste R</span><span id="rreste">0 MRO</span></div>
+      <div class="rl ve"><span>Filet (1/3)</span><span id="rfilet">0 MRO</span></div>
+      <div class="rl ve"><span id="rnparts">Chaque part (2/3 ÷ parts)</span><span id="rpart">0 MRO</span></div>
+      <button class="btn bvt" style="margin-top:10px;padding:11px" onclick="repEnregistrer()">💾 Enregistrer la journée</button>
+      <button class="btn brd" style="margin-top:6px;padding:11px" onclick="repPdf()">📄 PDF de la répartition</button>
+      <button class="btn bbl" style="margin-top:6px;padding:11px" onclick="repSauvegardeDrive()">☁️ Sauvegarder sur Drive</button>
+    </div>
+    <div class="bloc">
+      <div class="bt">💰 Avances à couper</div>
+      <div id="rrappels"></div>
+      <label>Nom du pêcheur</label><input class="inp" type="text" id="ravnom" placeholder="Ex: Mohamed"/>
+      <label>Montant (MRO)</label><input class="inp" type="number" id="ravmont" placeholder="0"/>
+      <button class="btn bor" style="margin-top:8px;padding:11px" onclick="repAjouterAvance()">💰 Ajouter une avance</button>
+    </div>
+  </div>
+
 <!-- NAV -->
 <div class="nav">
   <button class="nb on" id="nb-production" onclick="aller(String.fromCharCode(112,114,111,100,117,99,116,105,111,110))"><em>🐟</em>Production</button>
@@ -389,6 +453,7 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
   <button class="nb" id="nb-bons" onclick="aller(String.fromCharCode(98,111,110,115))"><em>📄</em>Bons</button>
   <button class="nb" id="nb-archives" onclick="aller(String.fromCharCode(97,114,99,104,105,118,101,115))"><em>📋</em>Archives</button>
   <button class="nb" id="nb-quinzaine" onclick="aller('quinzaine')"><em>🗓️</em>Quinzaine</button>
+  <button class="nb" id="nb-repartition" onclick="aller('repartition')"><em>🧾</em>Répart.</button>
   <button class="nb" id="nb-pirogues" onclick="aller(String.fromCharCode(112,105,114,111,103,117,101,115))"><em>🚤</em>Pirogues</button>
 </div>
 
@@ -443,7 +508,7 @@ gel('di').value=new Date().toISOString().split('T')[0];
 
 // NAV
 function aller(p){
-  var pages=['production','frais','bons','archives','quinzaine','pirogues'];
+  var pages=['production','frais','bons','archives','quinzaine','repartition','pirogues'];
   for(var i=0;i<pages.length;i++){
     var n=pages[i];
     var pe=gel('pg-'+n), ne=gel('nb-'+n);
@@ -452,6 +517,7 @@ function aller(p){
   }
   if(p==='archives') renderArch();
   if(p==='pirogues') renderPirs();
+  if(p==='repartition'){repOnDate();}
   if(p==='quinzaine'){mkBar('pbar3');initQuinz();}
   if(p==='bons'){initBons();updateBonTiles();}
   if(p==='frais'){renderPirBar2();renderAvJour();calc();}
@@ -1578,6 +1644,108 @@ function importData(event){
   event.target.value='';
 }
 
+// ===== REPARTITION (moka / marche, 1/3 filet, 2/3 equipe) =====
+var REP_COMM=0.20, REP_PIROGUES=2;
+var repDays=JSON.parse(localStorage.getItem('am-rep')||'{}');
+var repAv=JSON.parse(localStorage.getItem('am-rep-av')||'[]');
+var repCur={charges:[]};
+function sRep(){localStorage.setItem('am-rep',JSON.stringify(repDays));}
+function sRepAv(){localStorage.setItem('am-rep-av',JSON.stringify(repAv));}
+function repToday(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function repLire(){
+  var pec=parseInt(gel('rnpec').value)||0, mach=parseInt(gel('rnmach').value)||0;
+  var rec=0, mokaT=0, marT=0, comm=0;
+  repCur.charges.forEach(function(c){
+    var brut=c.tonnes*c.prix;
+    if(c.type==='marche'){ marT+=c.tonnes; comm+=brut*REP_COMM; rec+=brut*(1-REP_COMM); }
+    else { mokaT+=c.tonnes; rec+=brut; }
+  });
+  var fr=['rfcarb','rfnour','rftrans','rfgend','rfgc','rfautres'].reduce(function(s,id){return s+gN(id);},0);
+  var R=rec-fr, filet=R/3, parts=pec+mach+REP_PIROGUES, part=parts>0?(2*R/3)/parts:0;
+  return {pec:pec,mach:mach,parts:parts,mokaT:mokaT,marT:marT,rec:rec,comm:comm,fr:fr,R:R,filet:filet,part:part};
+}
+function repCalc(){
+  var r=repLire(); var f=function(n){return fmt(n)+' MRO';};
+  gel('rrec').textContent=f(r.rec); gel('rcomm').textContent='- '+f(r.comm);
+  gel('rfr').textContent='- '+f(r.fr); gel('rreste').textContent=f(r.R);
+  gel('rfilet').textContent=f(r.filet); gel('rpart').textContent=f(r.part);
+  gel('rnparts').textContent='Chaque part (2/3 ÷ '+r.parts+' parts)';
+}
+function repAjouterCharge(){
+  var t=parseFloat(gel('rtonnes').value)||0, p=parseFloat(gel('rprix').value)||(gel('rtype').value==='marche'?80000:70000);
+  var type=gel('rtype').value, bon=gel('rbon').value.trim(), plate=gel('rplate').value.trim();
+  if(!t||t<=0){toast('Tonnes requises','err');return;}
+  repCur.charges.push({type:type,bon:bon,plate:plate,tonnes:t,prix:p});
+  ['rbon','rplate','rtonnes','rprix'].forEach(function(id){gel(id).value='';});
+  repRenderCharges(); repCalc();
+}
+function repRetirerCharge(i){repCur.charges.splice(i,1);repRenderCharges();repCalc();}
+function repRenderCharges(){
+  var el=gel('rcharges');
+  el.innerHTML=repCur.charges.length?repCur.charges.map(function(c,i){
+    return '<div class="bon-i"><div><b>'+(c.type==='moka'?'Moka':'Marché')+'</b> — '+c.bon+' · '+c.plate+'<div class="bon-sub">'+c.tonnes+' T × '+fmt(c.prix)+' MRO</div></div><button class="bimp" onclick="repRetirerCharge('+i+')">✕</button></div>';
+  }).join(''):'<div class="empty">Aucun chargement pour ce jour.</div>';
+}
+function repOnDate(){
+  var d=gel('rdate').value||repToday(); var s=repDays[d];
+  repCur={charges:s?s.charges.slice():[]};
+  gel('rnpec').value=s?s.npec:''; gel('rnmach').value=s?s.nmach:'';
+  ['rfcarb','rfnour','rftrans','rfgend','rfgc','rfautres'].forEach(function(id){gel(id).value=(s&&s.frais[id])||'';});
+  repRenderCharges(); repRenderAv(); repCalc();
+}
+function repEnregistrer(){
+  var d=gel('rdate').value||repToday(); var r=repLire();
+  var frais={}; ['rfcarb','rfnour','rftrans','rfgend','rfgc','rfautres'].forEach(function(id){frais[id]=gN(id);});
+  repDays[d]={charges:repCur.charges,npec:r.pec,nmach:r.mach,frais:frais,resume:r};
+  sRep(); toast('✅ Journée '+d+' enregistrée');
+}
+function repAjouterAvance(){
+  var n=gel('ravnom').value.trim(), m=parseFloat(gel('ravmont').value)||0;
+  if(!n||m<=0){toast('Nom et montant requis','err');return;}
+  repAv.push({id:nid(),nom:n,restant:m,date:gel('rdate').value||repToday()});
+  sRepAv(); gel('ravnom').value=''; gel('ravmont').value=''; repRenderAv();
+  toast('💰 Avance ajoutée');
+}
+// Rappel : avances non soldees, a couper a la prochaine peche
+function repRenderAv(){
+  var el=gel('rrappels'); var ouv=repAv.filter(function(a){return a.restant>0;});
+  el.innerHTML=ouv.length?ouv.map(function(a){
+    return '<div class="rl ro"><span>À couper : '+a.nom+'</span><span>'+fmt(a.restant)+' MRO restant</span></div>';
+  }).join(''):'<div class="empty">Aucune avance à couper.</div>';
+}
+// Coupure : au maximum la part du pecheur ; le reste est reporte a la peche suivante
+function repCouper(nom,part){
+  var a=repAv.find(function(x){return x.nom===nom&&x.restant>0;});
+  if(!a) return 0;
+  var c=Math.min(a.restant,Math.max(0,part));
+  a.restant-=c; sRepAv(); return c;
+}
+// PDF : sans commission, sans division interne, sans avances
+function repPdf(){
+  var d=gel('rdate').value||repToday(); var r=repLire();
+  var rows=repCur.charges.map(function(c,i){return '<tr><td>'+(i+1)+'</td><td>'+c.bon+'</td><td>'+c.plate+'</td><td>'+(c.type==='moka'?'Moka':'Marché')+'</td><td style="text-align:right">'+c.tonnes+'</td><td style="text-align:right">'+fmt(c.tonnes*c.prix)+'</td></tr>';}).join('');
+  var parts=''; for(var i=1;i<=r.pec;i++) parts+='<tr><td>Pêcheur '+i+'</td><td style="text-align:right">'+fmt(r.part)+'</td></tr>';
+  for(var j=1;j<=r.mach;j++) parts+='<tr><td>Machine '+j+'</td><td style="text-align:right">'+fmt(r.part)+'</td></tr>';
+  parts+='<tr><td>Pirogue 1</td><td style="text-align:right">'+fmt(r.part)+'</td></tr><tr><td>Pirogue 2</td><td style="text-align:right">'+fmt(r.part)+'</td></tr>';
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"/><style>'+cssPDF()+'</style></head><body>'+entPDF('ÉTAT JOURNALIER DE PÊCHE','#0a1628',d,'Pirogues','')+
+    '<h3>Chargements</h3><table><tr><th>N°</th><th>Bon</th><th>Voiture</th><th>Type</th><th>Tonnes</th><th>Montant (MRO)</th></tr>'+rows+'</table>'+
+    '<h3>Frais</h3><table><tr><td>Total frais</td><td style="text-align:right">'+fmt(r.fr)+' MRO</td></tr></table>'+
+    '<h3>Bilan</h3><table><tr><td>Reste à partager</td><td style="text-align:right">'+fmt(r.R)+' MRO</td></tr><tr><td>Filet (1/3)</td><td style="text-align:right">'+fmt(r.filet)+' MRO</td></tr><tr><td>Équipe (2/3) — '+r.parts+' parts</td><td style="text-align:right">'+fmt(2*r.R/3)+' MRO</td></tr></table>'+
+    '<h3>Répartition</h3><table><tr><th>Part</th><th>Montant (MRO)</th></tr>'+parts+'</table>'+
+    sigPDF('Responsable')+footPDF()+'<scr'+'ipt>window.onload=function(){window.print();}<'+'/scr'+'ipt></body></html>';
+  ouvrirPDF(html);
+}
+// Sauvegarde Drive : envoie le JSON vers l'URL Apps Script (configuree une seule fois)
+function repSauvegardeDrive(){
+  var url=localStorage.getItem('am-drive-url')||'';
+  if(!url){url=prompt("Collez l'URL de déploiement Apps Script :")||'';
+    if(!url) return; localStorage.setItem('am-drive-url',url);}
+  var payload={exporte:new Date().toISOString(),jours:repDays,avances:repAv,pirogues:pirs};
+  fetch(url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(function(){toast('☁️ Sauvegarde envoyée sur Drive');})
+    .catch(function(){toast('Échec de la sauvegarde Drive','err');});
+}
+
 // MODAL & TOAST
 function ouvrirModal(html){gel('modalc').innerHTML=html;gel('modal').style.display='flex';}
 function fermerModal(){gel('modal').style.display='none';}
@@ -1591,6 +1759,7 @@ function toast(msg,type){
 
 // INIT
 mkBar('pbar');
+if(gel('rdate')){gel('rdate').value=repToday();repOnDate();}
 mkBar('pbar2');
 majMokaLabels();
 onVente();
