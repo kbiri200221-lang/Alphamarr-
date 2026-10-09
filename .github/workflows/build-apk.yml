@@ -21,10 +21,13 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - uses: android-actions/setup-android@v3
-
       - name: Installer le SDK Android
-        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+        run: |
+          SDK="$ANDROID_SDK_ROOT"
+          [ -z "$SDK" ] && SDK="$ANDROID_HOME"
+          echo "SDK=$SDK"
+          yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null 2>&1 || true
+          "$SDK/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;34.0.0"
 
       - name: Copier l'app web et l'icone dans le projet Android
         run: |
