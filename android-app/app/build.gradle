@@ -14,9 +14,22 @@ android {
         versionName '1.1'
     }
 
+    signingConfigs {
+        release {
+            storeFile file('alphamarr.keystore')
+            storePassword 'alphamarr'
+            keyAlias 'alphamarr'
+            keyPassword 'alphamarr'
+        }
+    }
+
     buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+        }
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
         }
     }
 

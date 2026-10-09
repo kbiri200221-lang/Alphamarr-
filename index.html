@@ -480,6 +480,18 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 var pirs=JSON.parse(localStorage.getItem('am-p')||'null')||[{id:1,nom:'Pirogue 1',comm:20,financement:0,financementRembourse:0},{id:2,nom:'Pirogue 2',comm:20,financement:0,financementRembourse:0}];
 var txs=JSON.parse(localStorage.getItem('am-t')||'[]');
 var avs=JSON.parse(localStorage.getItem('am-a')||'[]');
+// MIGRATION UNIQUE (non destructive) : avance essence 307 000 MRO pour la pirogue Mehdi
+(function(){
+  try{
+    var k='am-mig-essence-mehdi-2026-10-09';
+    if(localStorage.getItem(k)) return;
+    var pm=pirs.find(function(x){return x.nom==='Mehdi';});
+    var pid=pm?pm.id:2;
+    avs.push({id:nid(),bonNum:null,date:'2026-10-09',pirId:pid,pirNom:'Mehdi',nom:'Essence',montant:307000,motif:'essence',archived:false,quinzId:null});
+    localStorage.setItem('am-a',JSON.stringify(avs));
+    localStorage.setItem(k,'1');
+  }catch(e){}
+})();
 var bons=JSON.parse(localStorage.getItem('am-bons')||'[]');
 var bonCounter=parseInt(localStorage.getItem('am-bon-counter')||'0');
 var quinz=JSON.parse(localStorage.getItem('am-quinz')||'[]');
