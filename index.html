@@ -480,15 +480,14 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 var pirs=JSON.parse(localStorage.getItem('am-p')||'null')||[{id:1,nom:'Pirogue 1',comm:20,financement:0,financementRembourse:0},{id:2,nom:'Pirogue 2',comm:20,financement:0,financementRembourse:0}];
 var txs=JSON.parse(localStorage.getItem('am-t')||'[]');
 var avs=JSON.parse(localStorage.getItem('am-a')||'[]');
-// MIGRATION UNIQUE (non destructive) : avance essence 307 000 MRO pour la pirogue Mehdi
+// ANNULATION UNIQUE : retire l'avance essence 307 000 ajoutee par erreur (le carburant est un frais)
 (function(){
   try{
-    var k='am-mig-essence-mehdi-2026-10-09';
+    var k='am-mig-undo-essence-mehdi';
     if(localStorage.getItem(k)) return;
-    var pm=pirs.find(function(x){return x.nom==='Mehdi';});
-    var pid=pm?pm.id:2;
-    avs.push({id:nid(),bonNum:null,date:'2026-10-09',pirId:pid,pirNom:'Mehdi',nom:'Essence',montant:307000,motif:'essence',archived:false,quinzId:null});
-    localStorage.setItem('am-a',JSON.stringify(avs));
+    var before=avs.length;
+    avs=avs.filter(function(a){return !(a.nom==='Essence'&&a.motif==='essence'&&a.date==='2026-10-09'&&a.pirNom==='Mehdi'&&a.montant===307000);});
+    if(avs.length!==before) localStorage.setItem('am-a',JSON.stringify(avs));
     localStorage.setItem(k,'1');
   }catch(e){}
 })();
@@ -749,7 +748,7 @@ function refreshBonsPage(tx){
 function sauverFrais(){
   var dateJ=gel('di').value;
   var tx=txs.find(function(t){return t.pirId===pirId&&t.date===dateJ;});
-  if(!tx){toast('Enregistrez d abord la production','err');return;}
+  if(!tx){tx={id:nid(),date:dateJ,pirId:pirId,pirNom:gNom(pirId),poisson:'',poissonNote:'',type:'frais',comm:getComm(),cong:{qte:0,pu:0,vente:0,comm:0,net:0,unite:'kg'},moka:{qte:0,total:0,pu:0},recette:0,frais:{},totalFrais:0,avances:0,benef:0,bonNumProd:null,bonNumFrais:null,archived:false,quinzId:null}; txs.push(tx);}
   if(tx.archived){toast('🔒 Journee verrouillee (quinzaine cloturee) — rectifiez ou supprimez la cloture pour modifier','err');return;}
   var carb=gN('fcnb')*60*gN('fcpu');
   var rep=gN('frep'), autres=gN('fautres'), amende=gN('famende');
